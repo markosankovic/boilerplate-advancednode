@@ -26,7 +26,7 @@ myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
 
   app.route('/').get((req, res) => {
-    res.render('pug', { title: 'Connected to Database', message: 'Please login' });
+    res.render('pug', { title: 'Connected to Database', message: 'Please login', showLogin: true });
   });
 
   passport.serializeUser((user, done) => {
@@ -50,6 +50,12 @@ myDB(async (client) => {
       });
     }
   ));
+
+  app.route('/login').post(
+    passport.authenticate('local', { failureRedirect: '/', failureMessage: true }),
+    function (req, res) {
+      res.render('pug/profile', { user: req.user });
+    });
 }).catch((e) => {
   app.route('/').get((req, res) => {
     res.render('pug', { title: e, message: 'Unable to login' });
