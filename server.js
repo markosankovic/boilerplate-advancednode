@@ -22,6 +22,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+}
+
 myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
 
@@ -55,7 +62,15 @@ myDB(async (client) => {
     passport.authenticate('local', { failureRedirect: '/', failureMessage: true }),
     function (req, res) {
       res.render('pug/profile', { user: req.user });
-    });
+    },
+  );
+
+  app.route('/profile').get(
+    ensureAuthenticated,
+    (req, res) => {
+      res.render(process.cwd() + '/views/pug/profile');
+    }
+  );
 }).catch((e) => {
   app.route('/').get((req, res) => {
     res.render('pug', { title: e, message: 'Unable to login' });
