@@ -2,6 +2,7 @@ const session = require('express-session');
 const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local');
 const passport = require('passport');
+const GitHubStrategy = require('passport-github');
 
 module.exports = function (app, myDataBase) {
   passport.serializeUser((user, done) => {
@@ -13,6 +14,16 @@ module.exports = function (app, myDataBase) {
       done(null, doc);
     });
   });
+
+  passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: process.env.GITHUB_CALLBACK_URL,
+  },
+    function (accessToken, refreshToken, profile, cb) {
+      console.log(profile);
+    }
+  ));
 
   passport.use(new LocalStrategy(
     function (username, password, done) {
