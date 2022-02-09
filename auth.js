@@ -1,7 +1,7 @@
-const session = require('express-session');
-const ObjectID = require('mongodb').ObjectID;
-const LocalStrategy = require('passport-local');
 const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const bcrypt = require('bcrypt');
+const ObjectID = require('mongodb').ObjectID;
 const GitHubStrategy = require('passport-github').Strategy;
 
 module.exports = function (app, myDataBase) {
@@ -36,16 +36,7 @@ module.exports = function (app, myDataBase) {
   },
     function (accessToken, refreshToken, profile, cb) {
       console.log(profile);
+      // Database logic here with callback containing our user object
     }
   ));
-
-  app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  }));
-
-  app.use(passport.initialize());
-  app.use(passport.session());
 }

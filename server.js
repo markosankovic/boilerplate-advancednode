@@ -5,10 +5,22 @@ const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const routes = require('./routes');
 const auth = require('./auth');
+const passport = require('passport');
+const session = require('express-session');
 
 const app = express();
 
 app.set('view engine', 'pug');
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'secret',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { secure: false },
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
