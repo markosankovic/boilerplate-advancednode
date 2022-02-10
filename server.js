@@ -46,20 +46,32 @@ let currentUsers = 0;
 
 io.on('connection', socket => {
   console.log('user ' + socket.request.user.name + ' connected');
+
   ++currentUsers;
+
   io.emit('user', {
     name: socket.request.user.name,
     currentUsers,
     connected: true,
   });
+
   socket.on('disconnect', () => {
     --currentUsers;
+
     io.emit('user', {
       name: socket.request.user.name,
       currentUsers,
       connected: false,
     });
   });
+
+  socket.on('chat message', (message) => {
+    io.emit('chat message', {
+      name: socket.request.user.name,
+      message,
+    });
+  });
+
 });
 
 app.set('view engine', 'pug');
