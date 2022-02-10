@@ -19,6 +19,9 @@ io.on('connection', socket => {
   console.log('A user has connected');
   ++currentUsers;
   io.emit('user count', currentUsers);
+  socket.on('disconnect', () => {
+    --currentUsers;
+  });
 });
 
 app.set('view engine', 'pug');
