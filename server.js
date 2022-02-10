@@ -13,8 +13,12 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
+let currentUsers = 0;
+
 io.on('connection', socket => {
   console.log('A user has connected');
+  ++currentUsers;
+  io.emit('user count', currentUsers);
 });
 
 app.set('view engine', 'pug');
